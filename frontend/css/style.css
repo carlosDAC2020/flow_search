@@ -1,0 +1,163 @@
+/* --- Paleta de Colores y Variables --- */
+:root {
+    --cotecmar-blue: #007BFF;
+    --cotecmar-dark-blue: #0056b3;
+    --background-blue: #F0F8FF;
+    --background-light: #F8F9FA;
+    --text-dark: #212529;
+    --text-light: #FFFFFF;
+    --text-muted: #6c757d;
+    --card-bg: #FFFFFF;
+    --border-color: #DEE9FF;
+    --success-color: #198754;
+    --success-bg: #d1e7dd;
+    --pending-color: #ffc107;
+    --shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+    --shadow-hover: 0 8px 20px rgba(0, 123, 255, 0.15);
+}
+
+/* --- Estilos Globales --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--background-blue);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+.container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+h3 { color: var(--cotecmar-dark-blue); margin-bottom: 1.5rem; }
+.placeholder-text { color: var(--text-muted); text-align: center; padding: 3rem 1rem; font-style: italic; }
+
+/* --- Encabezado --- (Sin cambios) */
+header { background: var(--cotecmar-blue); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; color: var(--text-light); box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: 64px; }
+.header-left { display: flex; align-items: center; gap: 2rem; }
+.logo { height: 36px; filter: brightness(0) invert(1); }
+nav { display: flex; gap: 1.5rem; }
+.nav-link { color: var(--text-light); text-decoration: none; font-weight: 500; padding: 22px 0; border-bottom: 2px solid transparent; transition: border-color 0.2s; }
+.nav-link.active, .nav-link:hover { border-bottom-color: var(--text-light); }
+.user-profile { width: 40px; height: 40px; border-radius: 50%; background: var(--cotecmar-dark-blue); color: var(--text-light); display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
+
+/* --- Encabezado de Proyecto (Permanente) --- */
+.project-info-header {
+    background: var(--card-bg);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+.project-info-header h2 { color: var(--cotecmar-dark-blue); margin: 0; }
+.project-info-header p { margin: 0.5rem 0 1rem; color: var(--text-muted); }
+.project-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--text-muted); }
+.project-keywords { display: flex; gap: 0.5rem; }
+.keyword-tag { background: var(--background-light); padding: 0.25rem 0.75rem; border-radius: 15px; border: 1px solid var(--border-color); font-size: 0.85rem; }
+
+/* --- Contenedor del Flujo de Trabajo (Dinámico) --- */
+.workflow-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    /* MEJORA: Transición suave para ocultar el flujo */
+    transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.5s ease, margin 0.5s ease, padding 0.5s ease;
+    margin-bottom: 2rem;
+    max-height: 500px; /* Altura inicial para la animación */
+    opacity: 1;
+    overflow: hidden;
+}
+.workflow-container.hidden {
+    opacity: 0;
+    transform: scale(0.98);
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.timeline-panel, .results-panel { background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); }
+.timeline-panel h4 { margin-bottom: 1rem; }
+.workflow-step { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); font-weight: 500; }
+.workflow-step:last-child { border-bottom: none; }
+.step-icon { background: #ccc; color: var(--text-light); border-radius: 50%; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; font-size: 0.9rem; transition: background-color 0.3s; }
+.workflow-step.active .step-icon { background: var(--cotecmar-blue); }
+.workflow-step.completed .step-icon { background: var(--success-color); }
+.step-status { width: 12px; height: 12px; border-radius: 50%; margin-left: auto; position: relative; }
+.step-status.pending { background-color: #ccc; }
+.step-status.active::after { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; background-color: var(--cotecmar-blue); animation: pulse 1.5s infinite; }
+.step-status.completed { background-color: var(--success-color); }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(2.5); opacity: 0; } }
+
+.results-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 1rem; }
+.tab-btn { background: none; border: none; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+.tab-btn.active { color: var(--cotecmar-blue); border-bottom-color: var(--cotecmar-blue); }
+.results-content { min-height: 200px; }
+.result-section { display: none; animation: fadeIn 0.5s; }
+.result-section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- Estilos Mejorados para Historial de Investigaciones --- */
+.researches-section { margin-bottom: 2rem; }
+.researches-grid { display: grid; gap: 1.5rem; }
+
+.research-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+/* MEJORA: Estado hover para interactividad */
+.research-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+/* MEJORA: Estado activo para la tarjeta seleccionada */
+.research-card.active {
+    border-left-color: var(--cotecmar-blue);
+    box-shadow: var(--shadow);
+}
+.research-card.placeholder { opacity: 0.7; cursor: default; }
+.research-card.placeholder:hover { transform: none; box-shadow: none; }
+
+.research-card .card-icon { color: var(--success-color); margin-top: 4px; }
+.research-card .card-content { flex: 1; }
+.research-card h4 { margin: 0 0 0.5rem; color: var(--text-dark); }
+.research-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+.research-card .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); }
+.footer-meta { font-size: 0.8rem; color: var(--text-muted); }
+.opportunities-count { font-weight: 600; color: var(--cotecmar-dark-blue); }
+
+
+/* --- Estilos Mejorados para Sección de Detalles --- */
+.details-section { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); }
+.details-section h3 { padding: 1.5rem 2rem 0; margin-bottom: 0; }
+.details-tabs { display: flex; padding: 0 1.5rem; border-bottom: 1px solid var(--border-color); }
+.details-tab-btn {
+    background: none; border: none; padding: 1rem; font-size: 1rem; font-weight: 600; color: var(--text-muted); cursor: pointer;
+    border-bottom: 3px solid transparent; margin-bottom: -1px; transition: color 0.2s, border-color 0.2s;
+}
+.details-tab-btn.active, .details-tab-btn:hover {
+    color: var(--cotecmar-blue);
+}
+.details-tab-btn.active {
+    border-bottom-color: var(--cotecmar-blue);
+}
+.details-content-panel { padding: 2rem; }
+.details-content { display: none; animation: fadeIn 0.5s; }
+.details-content.active { display: block; }
+
+/* Estilos de contenido dinámico (reutilizados y refinados) */
+.results-list { list-style: none; padding: 0; display: grid; gap: 0.75rem; }
+.results-list li { background: var(--background-light); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); }
+.results-list a { font-weight: 600; color: var(--cotecmar-blue); text-decoration: none; }
+.results-list a:hover { text-decoration: underline; }
+.results-list p { font-size: 0.9rem; margin-top: 0.25rem; color: var(--text-muted); }
+
+.opportunity-card { border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; background-color: var(--background-light); }
+.opportunity-card h4 { color: var(--cotecmar-dark-blue); }
+.opportunity-card p { margin: 0.5rem 0; }
+.opportunity-meta { font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; color: var(--text-muted); }
+.financing-type { font-weight: 600; }
+.report-link { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--success-color); background: var(--success-bg); padding: 0.75rem 1.25rem; border-radius: 8px; text-decoration: none; border: 1px solid var(--success-color); transition: background-color 0.2s; }
+.report-link:hover { background-color: #c1dfd1; }

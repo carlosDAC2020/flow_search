@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Investigaciones - COTECMAR</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="images/logo-cotecmar.png" alt="Logo COTECMAR" class="logo">
+            <nav>
+                <a href="index.html" class="nav-link active">Dashboard</a>
+                <a href="#" class="nav-link">Reportes Globales</a>
+                <a href="#" class="nav-link">Configuración</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="user-profile">C</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- SECCIÓN 1: INFORMACIÓN GENERAL DEL PROYECTO (PERMANENTE) -->
+        <div class="project-info-header">
+            <h2 id="project-title">Análisis de Oportunidades: Detección de Deforestación con IA</h2>
+            <p id="project-description">Sistema de detección de deforestación en áreas rurales con inteligencia artificial para ayudar a los campesinos a tomar medidas de acción y promover la conservación.</p>
+            <div class="project-meta">
+                <div id="project-keywords" class="project-keywords">
+                    <!-- Los keywords se cargarán con JS -->
+                </div>
+                <span id="creation-date"></span>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: CONTENEDOR DEL FLUJO DE TRABAJO DINÁMICO (SE OCULTARÁ) -->
+        <div id="workflow-container" class="workflow-container">
+            <!-- Panel Izquierdo: Línea de Tiempo del Flujo -->
+            <div id="timeline-panel" class="timeline-panel">
+                <h4>Flujo de Trabajo del Agente</h4>
+                <div id="workflow-timeline" class="workflow-timeline">
+                    <div id="step-queries" class="workflow-step"><span class="step-icon">1</span> Generando Consultas...<div class="step-status pending"></div></div>
+                    <div id="step-search" class="workflow-step"><span class="step-icon">2</span> Buscando en la Web...<div class="step-status pending"></div></div>
+                    <div id="step-identification" class="workflow-step"><span class="step-icon">3</span> Identificando Oportunidades...<div class="step-status pending"></div></div>
+                    <div id="step-report" class="workflow-step"><span class="step-icon">4</span> Generando Reporte...<div class="step-status pending"></div></div>
+                </div>
+            </div>
+             <!-- Panel Derecho: Resultados en Tiempo Real del Flujo -->
+            <div id="results-panel" class="results-panel">
+                <div id="results-tabs" class="results-tabs"></div>
+                <div id="results-content" class="results-content">
+                    <!-- Placeholder inicial para el panel de resultados -->
+                    <p class="placeholder-text">Los resultados aparecerán aquí a medida que el agente avance...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: HISTORIAL DE INVESTIGACIONES -->
+        <div class="researches-section">
+            <h3>Historial de Investigaciones</h3>
+            <div id="researches-grid" class="researches-grid">
+                <!-- Placeholder: Se mostrará si no hay investigaciones -->
+                <div class="research-card placeholder">
+                    <div class="card-content">
+                        <p>Las investigaciones completadas aparecerán aquí.</p>
+                    </div>
+                </div>
+                 <!-- Las nuevas tarjetas de investigación se añadirán aquí dinámicamente -->
+            </div>
+        </div>
+
+        <!-- SECCIÓN 4: DETALLES DE LA INVESTIGACIÓN SELECCIONADA -->
+        <div class="details-section">
+             <h3>Detalles de la Investigación Seleccionada</h3>
+            <div class="details-tabs">
+                <button class="details-tab-btn active" data-tab="contexto">Items de Contexto</button>
+                <button class="details-tab-btn" data-tab="oportunidades">Oportunidades</button>
+                <button class="details-tab-btn" data-tab="reportes">Reportes</button>
+            </div>
+            <div class="details-content-panel">
+                <div id="tab-contexto" class="details-content active">
+                    <p class="placeholder-text">Selecciona una investigación del historial para ver sus detalles.</p>
+                </div>
+                <div id="tab-oportunidades" class="details-content">
+                     <p class="placeholder-text">Selecciona una investigación del historial para ver sus oportunidades.</p>
+                </div>
+                <div id="tab-reportes" class="details-content">
+                     <p class="placeholder-text">Selecciona una investigación del historial para ver su reporte.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/workflow.js"></script>
+</body>
+</html>
