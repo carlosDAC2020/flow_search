@@ -1,6 +1,7 @@
 import json
 from typing import List, Dict, Any
-
+from langchain_core.runnables import Runnable
+from schemas.models import FundingOpportunityList
 
 def flatten_queries(query_list: List[Dict[str, Any]]) -> List[Dict[str, str]]:
     """
@@ -28,7 +29,6 @@ def combine_results(list_of_lists: List[List[Dict]]) -> List[Dict]:
         combined.extend(sublist)
     return combined
 
-
 def normalize_search_results(raw_results: Dict[str, Any]) -> List[Dict[str, str]]:
     """
     Toma los resultados brutos de Tavily y Brave y los convierte a un formato estándar.
@@ -55,3 +55,38 @@ def normalize_search_results(raw_results: Dict[str, Any]) -> List[Dict[str, str]
         })
         
     return normalized
+
+def flatten_opportunities(list_of_opportunity_lists: List[FundingOpportunityList]) -> List[dict]:
+    """
+    Toma una lista de objetos FundingOpportunityList y la aplana en una
+    única lista de diccionarios de oportunidades.
+    """
+    final_list = []
+    for opportunity_list in list_of_opportunity_lists:
+        for opportunity in opportunity_list.opportunities:
+            final_list.append(opportunity.dict()) # Convertimos a dict para el JSON final
+    return final_list
+
+def filter_results_with_scrutinizer(search_results: List[Dict], scrutinizer_chain: Runnable):
+    """
+    Toma una lista de resultados de búsqueda, los evalúa con el agente de escrutinio,
+    y devuelve solo los que son considerados relevantes.
+    """
+    if not search_results:
+        return []
+
+    print(f"🔎 Se encontraron {len(search_results)} resultados únicos. Realizando escrutinio...")
+    
+    # Usamos .batch() para evaluar todos los resultados en paralelo, ¡muy eficiente!
+    scrutiny_outputs = scrutinizer_chain.batch(search_results)
+    
+    filtered_results = []
+    for original_result, scrutiny_result in zip(search_results, scrutiny_outputs):
+        if scrutiny_result.is_relevant:
+            print(f"  -> ✅ Relevante: {original_result['title']}")
+            filtered_results.append(original_result)
+        else:
+            print(f"  -> ❌ Descartado: {original_result['title']} (Razón: {scrutiny_result.reason})")
+
+    print(f"✅ Escrutinio completado. {len(filtered_results)} fuentes relevantes pasarán a la extracción.")
+    return filtered_results

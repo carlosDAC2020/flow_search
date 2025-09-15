@@ -1,6 +1,5 @@
-# schemas/models.py
-from typing import List
-from langchain_core.pydantic_v1 import BaseModel, Field
+from typing import List, Optional
+from pydantic import BaseModel, Field
 
 # --- Modelo para la generación de Queries ---
 class SearchQuery(BaseModel):
@@ -11,12 +10,20 @@ class SearchQuery(BaseModel):
 class QueryList(BaseModel):
     queries: List[SearchQuery] = Field(description="Una lista de 5 pares de queries de búsqueda generadas.")
 
-
-# --- Modelo para el paso de "Identification of Opportunities" (¡A futuro!) ---
+# --- esquema para validacion de fuentes ------------------------
+class ScrutinyResult(BaseModel):
+    is_relevant: bool = Field(description="Verdadero si la fuente parece ser una convocatoria, grant, o página de financiación directa. Falso si es una noticia, un blog, un directorio o un artículo académico.")
+    
+# --- Modelo para el paso de "Identification of Opportunities" ---
 class FundingOpportunity(BaseModel):
     origin: str = Field(description="Nombre de la organización o convocatoria que ofrece la financiación.")
     description: str = Field(description="Un resumen conciso de la oportunidad de financiación.")
-    financing_type: str = Field(description="Tipo de financiación (ej. grant, inversión de capital, subsidio).")
-    main_requirements: List[str] = Field(description="Lista de los requisitos principales para aplicar.")
-    application_deadline: str = Field(description="Fecha límite para la postulación (formato YYYY-MM-DD).")
-    url: str = Field(description="El enlace directo a la página de la convocatoria.")
+    financing_type: Optional[str] = Field(None, description="Tipo de financiación (ej. grant, inversión, subsidio).")
+    main_requirements: Optional[List[str]] = Field(default_factory=list, description="Lista de los requisitos principales para aplicar.")
+    application_deadline: Optional[str] = Field(None, description="Fecha límite para la postulación (formato YYYY-MM-DD).")
+    opportunity_url: Optional[str] = Field(None, description="El enlace directo a la página específica de la convocatoria, si se encuentra.")
+
+# --- Modelo para contener la lista de oportunidades ---
+class FundingOpportunityList(BaseModel):
+    opportunities: List[FundingOpportunity] = Field(description="Una lista de todas las oportunidades de financiación encontradas en la página.")
+

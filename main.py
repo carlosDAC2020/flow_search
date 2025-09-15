@@ -6,9 +6,15 @@ from langchain_core.output_parsers import JsonOutputParser
 
 from chains.query_generator import create_query_generator_chain
 from chains.research_agent import create_research_chain
-from schemas.models import QueryList
-from utils.normalizers import flatten_queries, combine_results
+from chains.scrutinizer_agent import create_scrutinizer_chain
+from chains.extractor_agent import create_full_extraction_pipeline
 
+from schemas.models import QueryList
+from utils.normalizers import flatten_queries, combine_results, filter_results_with_scrutinizer, flatten_opportunities
+# ¡NUEVOS! Importamos el agente de escrutinio y el de extracción
+from chains.scrutinizer_agent import create_scrutinizer_chain
+from chains.extractor_agent import create_full_extraction_pipeline 
+from schemas.models import QueryList
 
 def main():
     """
@@ -27,6 +33,8 @@ def main():
     
     query_generator = create_query_generator_chain()
     researcher = create_research_chain()
+    scrutinizer = create_scrutinizer_chain()
+    extractor = create_full_extraction_pipeline()
     
     # Unimos los componentes con la nueva lógica de aplanamiento
     full_pipeline = (
@@ -35,6 +43,9 @@ def main():
         | RunnableLambda(flatten_queries)        # 2. Aplana la lista en queries individuales
         | researcher.map()                       # 3. Ejecuta la búsqueda para CADA query
         | RunnableLambda(combine_results)        # 4. Combina todas las listas de resultados en una sola
+        | RunnableLambda(lambda results: filter_results_with_scrutinizer(results, scrutinizer)) # 5. filtrar por relevancia los resultados 
+        | extractor.map() # 6. extrarer las oportunidades de financiacion 
+        | RunnableLambda(flatten_opportunities) # 7. unificar lista de oportunidades
     )
 
     # --- Ejecución del pipeline (sin cambios) ---

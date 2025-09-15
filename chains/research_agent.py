@@ -1,6 +1,10 @@
 # chains/research_agent.py
 from langchain_core.runnables import RunnableParallel, RunnableLambda
 from langchain_community.tools.tavily_search import TavilySearchResults
+"""
+usar el tavili de langchain 
+from langchain_tavily import TavilySearch
+"""
 from langchain_community.tools import BraveSearch
 
 from config import settings
@@ -25,14 +29,6 @@ def create_research_chain():
     normalization_step = RunnableLambda(normalize_search_results)
     
     search_and_normalize_chain = parallel_search_step | normalization_step
-
-    """
-    process_query_pair_chain = RunnableParallel(
-        international_search=RunnableLambda(lambda x: {"query": x['international_query']}) | search_and_normalize_chain,
-        national_search=RunnableLambda(lambda x: {"query": x['national_query']}) | search_and_normalize_chain,
-        idea=RunnableLambda(lambda x: x['idea'])
-    )
-    """
     
     # Devolvemos la cadena que procesa un par de queries, para ser usada con .map() en main.py
     return search_and_normalize_chain
