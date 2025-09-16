@@ -38,7 +38,7 @@ Como mínimo, cada oportunidad debe tener un origen y una descripción."""),
     ])
     
     llm = ChatGoogleGenerativeAI(
-        model="gemini-1.5-pro-latest",
+        model="gemini-1.5-flash",
         api_key=settings.GEMINI_API_KEY,
         temperature=0
     )

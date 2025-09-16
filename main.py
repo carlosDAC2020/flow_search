@@ -1,20 +1,25 @@
 # main.py
 import json
-from typing import List, Dict, Any
 from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import JsonOutputParser
 
+# Importamos las cadenas de los agentes
 from chains.query_generator import create_query_generator_chain
 from chains.research_agent import create_research_chain
 from chains.scrutinizer_agent import create_scrutinizer_chain
 from chains.extractor_agent import create_full_extraction_pipeline
 
+# Importamos los modelos Pydantic
 from schemas.models import QueryList
-from utils.normalizers import flatten_queries, combine_results, filter_results_with_scrutinizer, flatten_opportunities
-# ¡NUEVOS! Importamos el agente de escrutinio y el de extracción
-from chains.scrutinizer_agent import create_scrutinizer_chain
-from chains.extractor_agent import create_full_extraction_pipeline 
-from schemas.models import QueryList
+
+# ¡Importamos las NUEVAS funciones secuenciales!
+from utils.normalizers import (
+    flatten_queries, 
+    combine_results, 
+    flatten_opportunities,
+    scrutinize_sequentially, # <--- NUEVA
+    extract_sequentially     # <--- NUEVA
+)
 
 def main():
     """
@@ -28,24 +33,27 @@ def main():
     }
     user_input_str = f"Título del proyecto: {user_project['title']}\nDescripción: {user_project['description']}\nPalabras clave: {', '.join(user_project['keywords'])}"
     
-    # --- Construcción del pipeline completo (Lógica actualizada) ---
-    print("\n🔗 Construyendo el pipeline de vigilancia...")
+    # --- Construcción del pipeline completo con lógica SECUENCIAL ---
+    print("\n🔗 Construyendo el pipeline de vigilancia con pasos secuenciales...")
     
     query_generator = create_query_generator_chain()
     researcher = create_research_chain()
     scrutinizer = create_scrutinizer_chain()
     extractor = create_full_extraction_pipeline()
     
-    # Unimos los componentes con la nueva lógica de aplanamiento
+    # Unimos los componentes usando las nuevas funciones
     full_pipeline = (
-        query_generator # extracion te queris de busqeda en priemra instancia
-        | RunnableLambda(lambda x: x['queries'])  # 1. Extrae la lista de pares de queries
-        | RunnableLambda(flatten_queries)        # 2. Aplana la lista en queries individuales
-        | researcher.map()                       # 3. Ejecuta la búsqueda para CADA query
-        | RunnableLambda(combine_results)        # 4. Combina todas las listas de resultados en una sola
-        | RunnableLambda(lambda results: filter_results_with_scrutinizer(results, scrutinizer)) # 5. filtrar por relevancia los resultados 
-        | extractor.map() # 6. extrarer las oportunidades de financiacion 
-        | RunnableLambda(flatten_opportunities) # 7. unificar lista de oportunidades
+        query_generator
+        | RunnableLambda(lambda x: x['queries'])
+        | RunnableLambda(flatten_queries)
+        | researcher.map()  # La búsqueda sí puede ser en paralelo, es eficiente
+        | RunnableLambda(combine_results)
+        # 5. Escrutinio SECUENCIAL
+        | RunnableLambda(lambda results: scrutinize_sequentially(results, scrutinizer))
+        # 6. Extracción SECUENCIAL
+        | RunnableLambda(lambda results: extract_sequentially(results, extractor))
+        # 7. Aplanamos la lista final de oportunidades
+        | RunnableLambda(flatten_opportunities)
     )
 
     # --- Ejecución del pipeline (sin cambios) ---
@@ -60,7 +68,7 @@ def main():
     final_results = full_pipeline.invoke(initial_input)
     
     print("\n✅ Pipeline completado exitosamente.")
-    print(f"\n📄 Se encontraron {len(final_results)} resultados en total. Mostrando la lista combinada:\n")
+    print(f"\n📄 Se encontraron {len(final_results)} oportunidades de financiación. Mostrando la lista final:\n")
     print(json.dumps(final_results, indent=2, ensure_ascii=False))
 
 if __name__ == "__main__":
