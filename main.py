@@ -68,6 +68,12 @@ def main():
     final_results = full_pipeline.invoke(initial_input)
     
     print("\n✅ Pipeline completado exitosamente.")
+
+    output_filename = "resultados_preliminares.json"
+    with open(output_filename, 'w', encoding='utf-8') as f:
+        json.dump(final_results, f, indent=2, ensure_ascii=False)
+    print(f"📄 Resultados preliminares guardados en '{output_filename}'.")
+
     print(f"\n📄 Se encontraron {len(final_results)} oportunidades de financiación. Mostrando la lista final:\n")
     print(json.dumps(final_results, indent=2, ensure_ascii=False))
 
