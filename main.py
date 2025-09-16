@@ -17,8 +17,8 @@ from utils.normalizers import (
     flatten_queries, 
     combine_results, 
     flatten_opportunities,
-    scrutinize_sequentially, # <--- NUEVA
-    extract_sequentially     # <--- NUEVA
+    scrutinize_sequentially,
+    extract_sequentially
 )
 
 def main():
