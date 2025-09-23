@@ -1,4 +1,7 @@
 # main.py
+
+import asyncio
+
 import json
 from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import JsonOutputParser
@@ -21,7 +24,7 @@ from utils.normalizers import (
     extract_sequentially
 )
 
-def main():
+async def main():
     """
     Orquesta el flujo completo de vigilancia tecnológica.
     """
@@ -43,18 +46,18 @@ def main():
     
     # Unimos los componentes usando las nuevas funciones
     full_pipeline = (
-        query_generator
-        | RunnableLambda(lambda x: x['queries'])
-        | RunnableLambda(flatten_queries)
-        | researcher.map()  # La búsqueda sí puede ser en paralelo, es eficiente
-        | RunnableLambda(combine_results)
+        query_generator.with_config(run_name="Generate_Query_Search")
+        | RunnableLambda(lambda x: x['queries']).with_config(run_name="Estructure_Querys_Search")
+        | RunnableLambda(flatten_queries).with_config(run_name="Estructure_Querys_Search")
+        | researcher.map().with_config(run_name="Web_Search")
+        | RunnableLambda(combine_results).with_config(run_name="Estructure_Search_Results")
         # 5. Escrutinio SECUENCIAL
-        | RunnableLambda(lambda results: scrutinize_sequentially(results, scrutinizer))
+        | RunnableLambda(lambda results: scrutinize_sequentially(results, scrutinizer)).with_config(run_name="Filter_Web_Search")
         # 6. Extracción SECUENCIAL
-        | RunnableLambda(lambda results: extract_sequentially(results, extractor))
+        | RunnableLambda(lambda results: extract_sequentially(results, extractor)).with_config(run_name="Estract_Opportunities")
         # 7. Aplanamos la lista final de oportunidades
-        | RunnableLambda(flatten_opportunities)
-    )
+        | RunnableLambda(flatten_opportunities).with_config(run_name="Estructure_Results")
+    ).with_config(run_name="Firts_Research_Opportunities")
 
     # --- Ejecución del pipeline (sin cambios) ---
     print("\n🚀 Ejecutando el pipeline completo...")
@@ -65,11 +68,22 @@ def main():
         "format_instructions": parser.get_format_instructions()
     }
     
+    async for event in full_pipeline.astream_events(initial_input, version="v1"):
+        kind = event["event"]
+        name = event.get("name", "unnamed") # Obtenemos el nombre del componente
+        print("--------- stream message  ----------------")
+        print(f"    {kind} : {name}")
+        print("------------------------------------------")
+        pass
+    """
     final_results = full_pipeline.invoke(initial_input)
-    
-    print("\n✅ Pipeline completado exitosamente.")
     print(f"\n📄 Se encontraron {len(final_results)} oportunidades de financiación. Mostrando la lista final:\n")
     print(json.dumps(final_results, indent=2, ensure_ascii=False))
+    """
+    
+    
+    print("\n✅ Pipeline completado exitosamente.")
+    
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

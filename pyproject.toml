@@ -11,5 +11,8 @@ dependencies = [
     "langchain-tavily>=0.2.11",
     "langchain[google-genai]>=0.3.27",
     "langgraph>=0.6.7",
+    "markdown-pdf>=1.9",
+    "pypandoc>=1.15",
+    "reportlab>=4.4.3",
     "tavily-python>=0.7.12",
 ]
