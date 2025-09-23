@@ -2,8 +2,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 
-from config import settings
-from schemas.models import QueryList
+from ..config import settings
+from ..schemas.models import QueryList
 
 def create_query_generator_chain():
     """Construye y devuelve la cadena para generar queries de búsqueda."""

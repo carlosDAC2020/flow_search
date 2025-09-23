@@ -3,8 +3,8 @@ from langchain_core.runnables import RunnableLambda
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.document_loaders import WebBaseLoader
 
-from schemas.models import FundingOpportunityList
-from config import settings
+from ..schemas.models import FundingOpportunityList
+from ..config import settings
 
 def scrape_content(item: dict) -> dict:
     """

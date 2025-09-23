@@ -1,8 +1,8 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from schemas.models import ScrutinyResult
-from config import settings
+from ..schemas.models import ScrutinyResult
+from ..config import settings
 
 def create_scrutinizer_chain():
     """
