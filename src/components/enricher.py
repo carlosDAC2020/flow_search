@@ -6,8 +6,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.tools.tavily_search import TavilySearchResults
 
-from schemas.models import FundingOpportunity # ¡Importamos el schema de salida!
-from config import settings
+from ..schemas.models import FundingOpportunity # ¡Importamos el schema de salida!
+from ..config import settings
 
 # --- PASO 1: Lógica para obtener el contenido de la mejor fuente ---
 

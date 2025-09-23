@@ -1,63 +1,24 @@
 # main.py
 import json
-from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import JsonOutputParser
 
-# Importamos las cadenas de los agentes
-from chains.query_generator import create_query_generator_chain
-from chains.research_agent import create_research_chain
-from chains.scrutinizer_agent import create_scrutinizer_chain
-from chains.extractor_agent import create_full_extraction_pipeline
+# Importamos el constructor del pipeline completo desde nuestra nueva estructura
+from src.pipelines.full_agent import create_full_agent_pipeline
+from src.schemas.models import QueryList # Lo necesitamos para el parser
 
-# Importamos los modelos Pydantic
-from schemas.models import QueryList
-
-# ¡Importamos las NUEVAS funciones secuenciales!
-from utils.normalizers import (
-    flatten_queries, 
-    combine_results, 
-    flatten_opportunities,
-    scrutinize_sequentially,
-    extract_sequentially
-)
-
-def main():
+def run_agent():
     """
-    Orquesta el flujo completo de vigilancia tecnológica.
+    Punto de entrada principal para ejecutar el agente de vigilancia de financiación.
     """
-    # --- Datos de entrada del proyecto (sin cambios) ---
+    print("🤖 Iniciando Agente de Vigilancia de Financiación...")
+    
+    # 1. Definir la entrada del proyecto
     user_project = {
         "title": "Detección de deforestación con IA",
-        "description": "Sistema de detección de deforestación en áreas rurales con inteligencia artificial para ayudar a los campesinos a tomar medidas de acción y promover la conservación.",
-        "keywords": ["deforestación", "cambio climático", "inteligencia artificial", "monitoreo ambiental", "sostenibilidad", "agricultura"]
+        "description": "Sistema de detección de deforestación en áreas rurales...",
+        "keywords": ["deforestación", "cambio climático", "inteligencia artificial"]
     }
     user_input_str = f"Título del proyecto: {user_project['title']}\nDescripción: {user_project['description']}\nPalabras clave: {', '.join(user_project['keywords'])}"
-    
-    # --- Construcción del pipeline completo con lógica SECUENCIAL ---
-    print("\n🔗 Construyendo el pipeline de vigilancia con pasos secuenciales...")
-    
-    query_generator = create_query_generator_chain()
-    researcher = create_research_chain()
-    scrutinizer = create_scrutinizer_chain()
-    extractor = create_full_extraction_pipeline()
-    
-    # Unimos los componentes usando las nuevas funciones
-    full_pipeline = (
-        query_generator
-        | RunnableLambda(lambda x: x['queries'])
-        | RunnableLambda(flatten_queries)
-        | researcher.map()  # La búsqueda sí puede ser en paralelo, es eficiente
-        | RunnableLambda(combine_results)
-        # 5. Escrutinio SECUENCIAL
-        | RunnableLambda(lambda results: scrutinize_sequentially(results, scrutinizer))
-        # 6. Extracción SECUENCIAL
-        | RunnableLambda(lambda results: extract_sequentially(results, extractor))
-        # 7. Aplanamos la lista final de oportunidades
-        | RunnableLambda(flatten_opportunities)
-    )
-
-    # --- Ejecución del pipeline (sin cambios) ---
-    print("\n🚀 Ejecutando el pipeline completo...")
     
     parser = JsonOutputParser(pydantic_object=QueryList)
     initial_input = {
@@ -65,17 +26,25 @@ def main():
         "format_instructions": parser.get_format_instructions()
     }
     
-    final_results = full_pipeline.invoke(initial_input)
+    # 2. Crear el pipeline completo
+    print("🔗 Construyendo el pipeline completo del agente...")
+    agent_pipeline = create_full_agent_pipeline()
     
-    print("\n✅ Pipeline completado exitosamente.")
-
-    #output_filename = "resultados_preliminares.json"
-    #with open(output_filename, 'w', encoding='utf-8') as f:
-    #    json.dump(final_results, f, indent=2, ensure_ascii=False)
-    #print(f"📄 Resultados preliminares guardados en '{output_filename}'.")
-
-    print(f"\n📄 Se encontraron {len(final_results)} oportunidades de financiación. Mostrando la lista final:\n")
-    print(json.dumps(final_results, indent=2, ensure_ascii=False))
-
+    # 3. Invocar el pipeline una sola vez
+    print("\n🚀 Ejecutando el flujo completo (Descubrimiento -> Enriquecimiento)...")
+    final_results = agent_pipeline.invoke(initial_input)
+    
+    # 4. Mostrar el resultado final
+    print("\n\n✅✅✅ AGENTE COMPLETADO EXITOSAMENTE ✅✅✅")
+    
+    """
+    output_filename = "resultados_finales_enriquecidos.json"
+    with open(output_filename, 'w', encoding='utf-8') as f:
+        # La salida ya son dicts por el `flatten_opportunities`, así que está listo para json.dump
+        json.dump(final_results, f, indent=2, ensure_ascii=False)
+        
+    print(f"\n📄 Se guardaron {len(final_results)} oportunidades finales y enriquecidas en '{output_filename}'.")
+    """
+    
 if __name__ == "__main__":
-    main()
+    run_agent()
