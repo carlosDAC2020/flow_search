@@ -91,9 +91,9 @@ El funcionamiento del sistema sigue un flujo lógico y asíncrono para garantiza
 7.  **Notificación y Visualización**: Al finalizar la tarea, el sistema puede generar una notificación automática (vía email o en la app). El usuario ya puede acceder a su panel en **Angular** para visualizar los resultados, los cuales son servidos por la **API de Django** consultando la información previamente almacenada en la base de datos.
 
 
+Otra forma de ver el flujo de trabajo es mediente la siguiente ilustración:
 
-
-
+![Diagrama de flujo del sistema](/images/flow_search_system.png)
 
 
 #### Modelo de Datos
