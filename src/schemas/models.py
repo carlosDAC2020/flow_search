@@ -13,9 +13,11 @@ class QueryList(BaseModel):
 # --- esquema para validacion de fuentes ------------------------
 class ScrutinyResult(BaseModel):
     is_relevant: bool = Field(description="Verdadero si la fuente parece ser una convocatoria, grant, o página de financiación directa. Falso si es una noticia, un blog, un directorio o un artículo académico.")
-    
+
 # --- Modelo para el paso de "Identification of Opportunities" ---
 class FundingOpportunity(BaseModel):
+    id: Optional[str] = Field(None, description="El identificador único de la base de datos (ej. UUID de Django).")
+    type: Optional[str] = Field(None, description="Indica si la oportunidad es 'National' o 'International'.")
     origin: str = Field(description="Nombre de la organización o convocatoria que ofrece la financiación.")
     description: str = Field(description="Un resumen conciso de la oportunidad de financiación.")
     financing_type: Optional[str] = Field(None, description="Tipo de financiación (ej. grant, inversión, subsidio).")
@@ -26,4 +28,3 @@ class FundingOpportunity(BaseModel):
 # --- Modelo para contener la lista de oportunidades ---
 class FundingOpportunityList(BaseModel):
     opportunities: List[FundingOpportunity] = Field(description="Una lista de todas las oportunidades de financiación encontradas en la página.")
-

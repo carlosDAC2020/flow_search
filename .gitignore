@@ -5,8 +5,14 @@ build/
 dist/
 wheels/
 *.egg-info
-resultados_*.json
 
 # Virtual environments
 .venv
 .env
+
+# Notes
+notes.txt
+
+# JSON files
+resultados_descubrimiento.json
+resultados_finales_enriquecidos.json

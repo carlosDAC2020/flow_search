@@ -12,10 +12,7 @@ from ..config import settings
 
 # Lista de URLs de RSS que quieres monitorear.
 RSS_FEEDS = [
-    "https://minciencias.gov.co/convocatorias/todas/rss.xml",
-#    "https://www.innpulsacolombia.com/feed",
-#    "https://www.grants.gov/rss/GG_NewOppRSS.jsp",
-#    "https://www.nsf.gov/funding/rss/agencylist.xml"
+    "https://minciencias.gov.co/convocatorias/todas/rss.xml"
 ]
 
 def fetch_and_limit_rss_feeds(rss_urls: list[str], limit_per_feed: int = 5) -> list[dict]:

@@ -1,14 +1,15 @@
 # src/pipelines/discovery.py
 import time
 from typing import List, Dict
-from langchain_core.runnables import Runnable, RunnableLambda, RunnableParallel
+from langchain_core.runnables import Runnable, RunnableLambda, RunnableParallel, RunnablePassthrough
+from operator import itemgetter
 
 from ..components.query_generator import create_query_generator_chain
 from ..components.researcher import create_research_chain, fetch_and_limit_rss_feeds, RSS_FEEDS
 from ..components.scrutinizer import create_scrutinizer_chain
 from ..components.extractor import create_full_extraction_pipeline
 from ..utils.normalizers import flatten_queries, combine_results, normalize_search_results
-from ..schemas.models import FundingOpportunityList
+from ..schemas.models import FundingOpportunityList, FundingOpportunity
 
 # --- ¡AQUÍ VIVE LA LÓGICA DE ORQUESTACIÓN SECUENCIAL! ---
 
@@ -32,19 +33,23 @@ def scrutinize_sequentially(search_results: List[Dict], scrutinizer_chain: Runna
             continue
     return filtered_results
 
-def extract_sequentially(relevant_results: List[Dict], extractor_chain: Runnable) -> List[Dict]:
+def extract_sequentially(relevant_results: List[Dict], extractor_chain: Runnable) -> List[FundingOpportunity]:
     """Extrae información detallada de las fuentes relevantes, una por una."""
     if not relevant_results: return []
     print(f"\n[Discovery Stage] Extrayendo de {len(relevant_results)} fuentes secuencialmente...")
     all_opportunities = []
     for result in relevant_results:
+        source_type = result.get("type")
         try:
             print(f"  -> Extrayendo de: {result.get('url')}")
             opportunity_list = extractor_chain.invoke(result)
             # La salida del extractor es FundingOpportunityList, accedemos a su contenido
-            all_opportunities.extend(opportunity_list.opportunities)
+            for opportunity in opportunity_list.opportunities:
+                opportunity.type = source_type
+                all_opportunities.append(opportunity)
+
         except Exception as e:
-            print(f"    ⚠️ Error durante la extracción: {e}")
+            print(f"    ⚠️ Error durante la extracción de {result.get('url')}: {e}")
             continue
         time.sleep(2) # Pausa entre extracciones
     return all_opportunities
@@ -60,15 +65,23 @@ def create_discovery_pipeline():
     scrutinizer = create_scrutinizer_chain()
     extractor = create_full_extraction_pipeline()
 
+    def add_type_to_results(results: List[Dict], type: str) -> List[Dict]:
+        for result in results:
+            result['type'] = type
+        return results
+
     # --- LÓGICA DE PIPELINE CORREGIDA ---
 
     # Paso 1: Definimos una cadena que BUSCA y LUEGO NORMALIZA un resultado de búsqueda.
     # La salida de web_researcher es un dict {'tavily': ..., 'brave': ...}.
     # La entrada de normalize_search_results es exactamente ese dict. Encajan perfectamente.
-    search_and_normalize_one = (
-        web_researcher 
-        | RunnableLambda(normalize_search_results)
-    ).with_config({"run_name": "Search & Normalize One Query"})
+    search_and_normalize_one = RunnablePassthrough.assign(
+        normalized_results= (
+            itemgetter("query") 
+            | web_researcher 
+            | RunnableLambda(normalize_search_results)
+        )
+    ) | RunnableLambda(lambda x: add_type_to_results(x['normalized_results'], x['type'])).with_config({"run_name": "Search & Normalize One Query"})
 
     # Paso 2: Creamos el pipeline de búsqueda web.
     web_search_pipeline = (
@@ -82,7 +95,7 @@ def create_discovery_pipeline():
 
     # Paso 3: Creamos el pipeline de RSS (sin cambios)
     rss_fetcher_pipeline = RunnableLambda(
-        lambda _: fetch_and_limit_rss_feeds(RSS_FEEDS, limit_per_feed=5)
+        lambda _: fetch_and_limit_rss_feeds(RSS_FEEDS, limit_per_feed=2)
     ).with_config({"run_name": "Fetching RSS Feeds"})
 
     # Paso 4: Unimos la búsqueda web y RSS en paralelo

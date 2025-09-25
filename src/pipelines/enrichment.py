@@ -14,21 +14,34 @@ def create_enrichment_orchestrator():
         print(f"\n[Enrichment Stage] Iniciando enriquecimiento para {len(opportunities_list)} oportunidades...")
         enriched_opportunities = []
         
-        for i, opportunity in enumerate(opportunities_list):
-            print(f"--- Enriqueciendo {i+1}/{len(opportunities_list)}: {opportunity.origin} ---")
+        for opportunity_dict in opportunities_list:
+            original_id = opportunity_dict.get("id")
+            original_type = opportunity_dict.get("type")
+
+            if not original_id:
+                print(f"  -> ❌ Saltando oportunidad porque falta ID: {opportunity_dict.get('origin')}")
+                continue
+            if not original_type:
+                print(f"  -> ❌ Saltando oportunidad porque falta TIPO: {opportunity_dict.get('origin')}")
+                continue
+
+            print(f"--- Enriqueciendo ID {original_id}: {opportunity_dict.get('origin')} ---")
             try:
                 # --- ¡MODIFICACIÓN CLAVE AQUÍ! ---
                 # Creamos un nombre dinámico para la ejecución de cada item.
                 # El frontend podrá mostrar "Enriqueciendo: Climate Change AI"...
                 run_config = {
-                    "run_name": f"Enriching Item: {opportunity.origin[:40]}" # Limitamos a 40 chars
+                    "run_name": f"Enriching Item: {opportunity_dict.get('origin')[:40]}" # Limitamos a 40 chars
                 }
                 
                 # Pasamos la configuración directamente a la llamada .invoke()
                 enriched_result = enrichment_worker_pipeline.invoke(
-                    opportunity.dict(), # El worker espera un dict
+                    opportunity_dict, # El worker espera un dict
                     config={"callbacks": run_config.get("callbacks"), **run_config}
                 )
+
+                enriched_result.id = original_id
+                enriched_result.type = original_type
                 
                 enriched_opportunities.append(enriched_result)
             except Exception as e:
