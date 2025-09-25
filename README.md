@@ -1,16 +1,16 @@
 # Desarrollo de una herramienta de vigilancia tecnológica para identificar oportunidades de financiamiento de proyectos de investigación
 
-## Objetivo General
+## **Objetivo General**
 Desarrollar una herramienta automatizada que realice vigilancia tecnológica en la web, identificando convocatorias nacionales e internacionales de financiamiento para proyectos de investigación, y que genere informes explicativos sobre dichas oportunidades.
 
-## Objetivos Específicos
+## **Objetivos Específicos**
 *   Diseñar un sistema que explore fuentes oficiales y confiables (portales de agencias de financiación, universidades, organizaciones multilaterales, etc.).
 *   Implementar algoritmos de web scraping y/o APIs para recolección automatizada de datos.
 *   Clasificar las oportunidades encontradas por áreas de investigación, requisitos, fechas y tipo de financiamiento.
 *   Generar reportes periódicos (semanales o mensuales) con resúmenes ejecutivos de las nuevas convocatorias.
 *   Permitir búsquedas manuales y suscripciones personalizadas a temas de interés.
 
-## Entregables
+## **Entregables**
 *   Módulo funcional de recolección de datos desde fuentes web (scraper/API).
 *   Base de datos estructurada de convocatorias vigentes e históricas.
 *   Interfaz web o de escritorio para consultas y visualización de oportunidades.
@@ -20,10 +20,10 @@ Desarrollar una herramienta automatizada que realice vigilancia tecnológica en 
 *   Informe final del desarrollo del sistema.
 
 
-## Propuesta de solucion
+## **Propuesta de Solución**
 Para cumplir con el objetivo general, se propone el desarrollo de una plataforma tecnológica avanzada que integra agentes de inteligencia artificial con una arquitectura de microservicios moderna y escalable. Esta solución está diseñada para automatizar por completo el ciclo de vigilancia tecnológica, desde la recolección masiva de datos en la web hasta la generación de informes ejecutivos. El sistema operará de forma asíncrona para garantizar un alto rendimiento y una experiencia de usuario fluida, permitiendo a los investigadores centrarse en sus propuestas y no en la búsqueda manual de financiación.
 
-### Requerimientos
+### **Requerimientos**
 Los requerimientos para el optimo funcionamiento del sistema son los siguientes:
 
 #### Funcionales
@@ -40,11 +40,11 @@ Los requerimientos para el optimo funcionamiento del sistema son los siguientes:
 -   Implementación de MicroServicios.
 -   Manejo asíncrono de tareas (Investigaciones de proyectos se realizarán en segundo plano).
 
-### Arquitectura y Flujo de Tecnologías
+### **Arquitectura y Flujo de Tecnologías**
 
 La arquitectura se basa en un ecosistema de **MicroServicios orquestados por Docker**, lo que permite que cada componente del sistema opere de forma independiente, sea escalable y fácil de mantener. A continuación, se detalla la tecnología asociada a cada servicio y cómo interactúan entre sí.
 
-#### Stack Tecnológico por Servicio
+#### **Stack Tecnológico por Servicio**
 
 | Componente                | Tecnologías Clave                                       | Responsabilidad                                                                                                     |
 | :------------------------ | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------ |
@@ -56,11 +56,12 @@ La arquitectura se basa en un ecosistema de **MicroServicios orquestados por Doc
 | **Orquestación**          | **Docker, Docker-Compose**                              | Gestiona el ciclo de vida de todos los servicios, define las redes, volúmenes y variables de entorno para el despliegue. |
 
 
-#### Servicios Externos
+#### **Servicios Externos**
 
 Para realizar la vigilancia tecnológica y el enriquecimiento de datos, el sistema se apoya en un conjunto de APIs y tecnologías externas que son fundamentales para su operación.
 
 *   **Gemini API**: Es el núcleo de la inteligencia artificial del sistema. Este modelo de lenguaje avanzado de Google se utiliza para procesar el texto no estructurado de las convocatorias encontradas. Sus tareas principales incluyen: resumir los objetivos de la convocatoria, extraer datos clave como fechas límite, montos de financiamiento y requisitos de elegibilidad, y clasificar las oportunidades por área de investigación.
+
 
 *   **Brave API / Tavily API**: Son los motores de búsqueda que alimentan al sistema. Se utilizan para realizar consultas web automatizadas y descubrir nuevas convocatorias en portales que no ofrecen feeds RSS. Tavily está especialmente optimizado para ser utilizado por agentes de IA, proporcionando resultados de búsqueda concisos y relevantes que facilitan el posterior análisis por parte de Gemini.
 
@@ -69,7 +70,7 @@ Para realizar la vigilancia tecnológica y el enriquecimiento de datos, el siste
 *   **LangSmith**: Es una plataforma de observabilidad y depuración para aplicaciones de modelos de lenguaje. Se integra con LangChain para ofrecer una trazabilidad completa de las operaciones del Worker. Permite a los desarrolladores monitorear cada paso del proceso de investigación (búsquedas, llamadas a la API de Gemini, procesamiento de datos), facilitando la identificación de errores, la optimización de los *prompts* y la mejora continua de la fiabilidad del sistema.
 
 
-#### Flujo de Trabajo e Interacción entre Servicios
+#### **Flujo de Trabajo e Interacción entre Servicios**
 
 El funcionamiento del sistema sigue un flujo lógico y asíncrono para garantizar una experiencia de usuario fluida y un procesamiento eficiente.
 
@@ -96,42 +97,56 @@ Otra forma de ver el flujo de trabajo es mediente la siguiente ilustración:
 ![Diagrama de flujo del sistema](/images/flow_search_system.png)
 
 
-#### Modelo de Datos
+#### **Modelo de Datos**
 
-La persistencia de los datos se gestiona a través de una base de datos relacional PostgreSQL, diseñada para reflejar lógicamente el flujo de trabajo de la aplicación. Este modelo garantiza que toda la información, desde los proyectos de los usuarios hasta las oportunidades identificadas, esté organizada, relacionada y sea fácilmente accesible.
+La persistencia y la estructura de la información se gestionan a través de una base de datos relacional PostgreSQL. El diseño del modelo de datos está pensado para reflejar de manera lógica las interacciones entre los usuarios, los proyectos de investigación, las oportunidades de financiamiento y los resultados generados por el sistema. Esta organización garantiza la integridad de los datos, facilita las consultas complejas y asegura la escalabilidad de la plataforma.
 
-##### Diagrama Entidad-Relación (ERD)
+##### **Diagrama Entidad-Relación (ERD)**
 
 ![Diagrama de la Base de Datos](/images/ER.jpeg)
 
+##### **Descripción de las Entidades**
 
-##### Descripción de las Entidades
+A continuación, se detalla el propósito de cada una de las tablas principales del sistema:
 
-*   **User**: Almacena las credenciales de los usuarios para la autenticación y gestión de acceso al sistema.
+*   **User**: Almacena la información esencial para la autenticación y gestión de los usuarios, incluyendo su nombre de usuario y contraseña (almacenada de forma segura mediante hashing).
 
-*   **Project**: Representa el objeto de vigilancia definido por el usuario, conteniendo el título, la descripción y las palabras clave que sirven como entrada para los agentes de IA.
+*   **Project**: Representa el núcleo de la vigilancia tecnológica. Cada registro contiene la información clave de un proyecto de investigación definido por el usuario, como el `Título`, la `Descripción` y las `Palabras clave` (`Keywords`). Estos campos son la entrada principal para los agentes de IA que realizan las búsquedas.
 
-*   **Research**: Registra cada ejecución del flujo de investigación para un proyecto. Funciona como un historial, guardando métricas clave como la fecha y el tiempo de ejecución.
+*   **Notes**: Proporciona un espacio flexible para que los usuarios registren anotaciones clave. Cada nota está intrínsecamente ligada a un **`Project`**, sirviendo para documentar acciones, hallazgos importantes o ideas surgidas durante el proceso de investigación. Opcionalmente, una nota puede estar asociada directamente a una **`Opportunity`** específica para añadir contexto o registrar los siguientes pasos sobre una convocatoria particular.
 
-*   **Item_context**: Contiene los resultados normalizados de las búsquedas web. Cada registro es una fuente de información (un enlace con su título y descripción) que ha sido considerada relevante para ser analizada en profundidad.
+*   **Opportunity**: Es la entidad central donde se almacenan las oportunidades de financiamiento identificadas y procesadas por el sistema. Contiene datos estructurados y extraídos por la IA, como el `Origen` de la convocatoria, `Descripción`, `Financiamiento`, `Requisitos`, `Fecha límite` (`Deadline`) y la `URL` original.
 
-*   **Opportunity**: Almacena los datos estructurados y extraídos por el agente de IA. Cada registro es una oportunidad de financiación concreta, con detalles como su origen, descripción, tipo de financiamiento y fechas límite.
+*   **Item_context**: Funciona como un repositorio de las fuentes de información brutas que los agentes de IA han considerado relevantes durante una búsqueda. Cada registro contiene el `Título`, `Descripción`, `URL` y un `Resumen` de una página web o documento analizado, sirviendo como la evidencia que respalda una `Opportunity` encontrada.
 
-*   **Report**: Guarda una referencia a los informes generados al finalizar una investigación, incluyendo la fecha de creación y la ruta de acceso al archivo.
+*   **Research**: Actúa como un registro histórico de cada ejecución del proceso de búsqueda para un proyecto. Almacena metadatos sobre el proceso, como la `Fecha` y `Hora` de ejecución (`Execute_time`), así como métricas de rendimiento como el `Relevance_ratio` y el `Opportunity_ratio`.
 
-##### Relaciones Clave
+*   **Report**: Guarda una referencia a los informes generados al finalizar un ciclo de investigación. Incluye la `Fecha` de creación y la ruta de acceso (`Path`) al archivo del reporte, permitiendo un acceso rápido a los resultados consolidados.
 
-*   Un **`User`** puede tener múltiples **`Projects`**.
-*   Un **`Project`** puede tener múltiples **`Research`** (ejecuciones) a lo largo del tiempo.
-*   Cada **`Research`** produce un **`Report`** final.
-*   Tanto los **`Item_context`** como las **`Opportunities`** están vinculados a un **`Project`** para mantener todo el contexto de la investigación organizado.
+##### **Relaciones Clave**
+
+Las entidades están interconectadas para mantener la coherencia y el contexto de los datos a lo largo del flujo de trabajo de la aplicación:
+
+*   Un **`User`** puede ser propietario y gestionar múltiples **`Projects`**.
+*   Un **`Project`** es el contenedor principal de la actividad de vigilancia y puede tener asociados:
+    *   Múltiples ejecuciones de **`Research`** a lo largo del tiempo.
+    *   Múltiples **`Opportunities`** que se han identificado como relevantes.
+    *   Múltiples **`Notes`**, que sirven como bitácora de hallazgos y acciones relacionadas con el proyecto.
+*   Cada **`Research`** genera un único **`Report`** final.
+*   Una **`Opportunity`** se deriva de la información contenida en uno o varios **`Item_context`**.
+*   La relación de las **`Notes`** es la siguiente:
+    *   Son creadas por un **`User`**.
+    *   Siempre pertenecen a un **`Project`**.
+    *   Opcionalmente, pueden hacer referencia a una **`Opportunity`** para añadirle comentarios específicos.
 
 
-#### Estrategia de Seguridad y Autenticación
+#### **Estrategia de Seguridad y Autenticación**
 
 La seguridad de los datos y el control de acceso son componentes críticos de la arquitectura del sistema. Dado que la plataforma gestionará información específica de los usuarios (proyectos de investigación, resultados, reportes), se implementará un esquema de seguridad robusto basado en tokens para proteger la API y garantizar que cada usuario solo pueda acceder a sus propios recursos.
 
 La estrategia de seguridad se fundamenta en los siguientes pilares:
+
+![Diagrama de flujo de autenticacion](/images/JWT.jpeg)
 
 ##### **1. Autenticación basada en Tokens (JWT)**
 
@@ -171,10 +186,66 @@ El proceso de creación de nuevas cuentas también seguirá prácticas de seguri
 *   La lógica del backend validará los datos de entrada (ej. formato de email, complejidad de la contraseña).
 *   Como se mencionó anteriormente, la contraseña proporcionada por el usuario será inmediatamente procesada por un algoritmo de **hashing** antes de ser almacenada en la base de datos. Este es el principio de seguridad más importante para la protección de credenciales.
 
+#### **Propuesta Visual**
+
+La interfaz de usuario (UI) y la experiencia de usuario (UX) están diseñadas para ser limpias, intuitivas y funcionales, permitiendo a los investigadores centrarse en la gestión de sus proyectos sin distracciones. Se ha optado por un diseño moderno con un tema oscuro para reducir la fatiga visual y resaltar los elementos importantes de la interfaz.
+
+Es importante señalar que las imágenes presentadas a continuación corresponden a un diseño conceptual inicial y están sujetas a cambios. Si bien la disposición específica de algunos componentes podría variar durante el desarrollo para mejorar el flujo de trabajo, el estilo artístico general, la paleta de colores, la tipografía y la estética moderna se mantendrán como la línea base del producto final.
+
+A continuación, se presenta el flujo visual de la aplicación a través de sus pantallas clave.
+
+##### **1. Autenticación y Acceso**
+
+El acceso a la plataforma comienza con una pantalla de inicio de sesión minimalista. Los nuevos usuarios pueden registrarse a través de un formulario sencillo que solicita únicamente la información necesaria para crear la cuenta.
+
+| Inicio de Sesión                                | Creación de Cuenta                                 |
+| :---------------------------------------------- | :------------------------------------------------- |
+| ![Login de Usuario](/images/login.png)          | ![Registro de Usuario](/images/register.png)       |
+
+##### **2. Dashboard Principal de Proyectos**
+
+Una vez autenticado, el usuario es recibido por el "Dashboard de Proyectos". Esta es la vista central donde se listan todos los proyectos de vigilancia activos. Cada proyecto se muestra en una tarjeta que resume su estado, el número de oportunidades encontradas y la fecha de la última búsqueda. Desde aquí, el usuario puede gestionar proyectos existentes o iniciar uno nuevo.
+
+![Dashboard de Proyectos](/images/deashboard.png)
+
+##### **3. Creación y Gestión de Proyectos**
+
+Al hacer clic en "+ Nuevo Proyecto", se despliega un modal que guía al usuario para definir el alcance de la vigilancia. Aquí se introduce el `Título`, la `Descripción` y las `Palabras Clave` que los agentes de IA utilizarán como base para la búsqueda.
+
+![Creación de un Nuevo Proyecto](/images/create_proyect.png)
+
+##### **4. Vista Detallada del Proyecto y Oportunidades**
+
+Al seleccionar un proyecto, el usuario accede a su panel de control específico. Esta vista presenta una descripción detallada del proyecto y tres pestañas principales:
+
+*   **Oportunidades:** Muestra las convocatorias de financiamiento encontradas, presentadas en tarjetas claras y concisas.
+*   **Historial de Búsquedas:** Registra cada ejecución de la investigación, mostrando su fecha, duración y estado.
+*   **Fuentes Analizadas:** Proporciona transparencia sobre las URLs y fuentes que el sistema ha consultado.
+
+![Vista de un Proyecto Específico](/images/details.proyect.png)
+
+##### **5. Proceso de Búsqueda Asíncrona**
+
+Cuando se inicia una nueva búsqueda, la interfaz proporciona retroalimentación visual en tiempo real, informando al usuario que el proceso se está ejecutando en segundo plano. Esto confirma la naturaleza asíncrona del sistema, permitiendo al usuario seguir navegando mientras los workers procesan la solicitud. Una vez completada, la ejecución aparece registrada en el historial.
+
+![Flujo de Búsqueda Activa](/images/flow_activate.png)
+
+##### **6. Detalles de la Oportunidad**
+
+Para explorar una convocatoria en profundidad, el usuario puede hacer clic en "Ver Detalles" en cualquiera de las tarjetas de oportunidad. Esto abre un modal con toda la información estructurada y extraída por la IA, como la `Fecha Límite`, `Tipo de Financiación`, `URL` original, `Descripción` y `Requisitos Principales`, permitiendo una evaluación rápida y eficiente.
+
+![Detalles de una Oportunidad de Financiamiento](/images/details_opportunities.png)
+
+
+##### **Prototipo Interactivo (Demo)**
+
+Para una experiencia más interactiva, se ha desplegado una maqueta (comúnmente llamada *dummy* o *mockup*) de la interfaz. Puedes navegar y explorar el flujo visual del prototipo, aunque sin funcionalidad de backend, en el siguiente enlace:
+
+**[Explorar la Demo en Vivo](https://carlosdac2020.github.io/FINCOR/)**
 
 
 
-## Metodología y Estrategias de Trabajo
+## **Metodología y Estrategias de Trabajo**
 Para garantizar el cumplimiento de los objetivos y la entrega de una solución robusta y escalable, el proyecto se gestionará bajo un marco de trabajo ágil, combinando fases de desarrollo bien definidas con estrategias técnicas especializadas en la recolección y procesamiento inteligente de datos.
 
 ### **Metodología de Desarrollo**
@@ -241,3 +312,8 @@ Para la ejecución de las fases de desarrollo, se implementarán las siguientes 
 *   **Arquitectura Asíncrona y Orientada a Eventos:** El núcleo del sistema se basará en el patrón productor-consumidor. La API de Django actuará como productora, enviando tareas a la cola de Redis. Los *Workers* de Celery (consumidores) tomarán estas tareas y las ejecutarán en segundo plano. Este enfoque es fundamental para:
     *   **No Bloquear al Usuario:** El usuario recibe una respuesta inmediata de la API, mientras que el procesamiento pesado ocurre de forma asíncrona.
     *   **Escalabilidad y Resiliencia:** Es posible añadir más *Workers* para aumentar la capacidad de procesamiento sin alterar el resto del sistema. Si un *Worker* falla, la tarea puede ser reintentada sin afectar la experiencia del usuario.
+
+
+
+
+
