@@ -1,4 +1,12 @@
-# Desarrollo de una herramienta de vigilancia tecnológica para identificar oportunidades de financiamiento de proyectos de investigación
+# **Desarrollo de una herramienta de vigilancia tecnológica para identificar oportunidades de financiamiento de proyectos de investigación**
+
+## **Información del Proyecto**
+
+*   **Autores:**
+    *   Carlos Daniel Agamez Palomino
+    *   Harold Styven Lagares De Voz
+*   **Periodo de Desarrollo:** 11 de septiembre de 2025 – 25 de septiembre de 2025
+*   **Versión:** 1.0
 
 ## **Objetivo General**
 Desarrollar una herramienta automatizada que realice vigilancia tecnológica en la web, identificando convocatorias nacionales e internacionales de financiamiento para proyectos de investigación, y que genere informes explicativos sobre dichas oportunidades.
@@ -64,38 +72,108 @@ Para realizar la vigilancia tecnológica y el enriquecimiento de datos, el siste
 
 *   **Rol en el Sistema**: Es el núcleo de la inteligencia artificial del sistema. Este modelo de lenguaje avanzado de Google se utiliza para procesar el texto no estructurado de las convocatorias encontradas. Sus tareas principales incluyen: generar consultas de búsqueda, clasificar la relevancia de las fuentes, resumir los objetivos de la convocatoria y extraer datos clave como fechas límite, montos de financiamiento y requisitos de elegibilidad.
 *   **Costos Asociados**:
-    *   **Plan Gratuito**: Google ofrece una capa gratuita generosa, ideal para desarrollo y pruebas. Incluye un límite de peticiones por minuto (ej. 15 RPM para el modelo `gemini-1.5-flash`) y un límite diario de 50 peticiones. Es suficiente para ejecuciones ocasionales o de bajo volumen.
-    *   **Planes de Pago (Pay-as-you-go)**: Una vez superada la capa gratuita, se paga por uso basado en el número de "tokens" (palabras/fragmentos de texto) procesados. El modelo `gemini-1.5-flash` utilizado en este proyecto es extremadamente económico.
-        *   **Ejemplo de Costo**: Procesar 1 millón de tokens de entrada cuesta alrededor de **$0.35 USD**. Una ejecución completa del agente, que puede analizar docenas de fuentes, suele costar apenas unos centavos de dólar.
+    *   **Plan Gratuito**: Incluye un límite de peticiones por minuto (ej. 15 RPM para el modelo `gemini-1.5-flash` el cuál utilizamos para nuestra herramienta) y un límite diario de 50 peticiones.
+    *   **Planes de Pago (Pay-as-you-go)**: Una vez superada la capa gratuita (+1M de tokens procesados), se paga por uso basado en el número de tokens procesados, alrededor de **$0.35 USD**.
+
 
 #### **Brave API / Tavily API**
 
 *   **Rol en el Sistema**: Son los motores de búsqueda que alimentan al sistema. Se utilizan para realizar consultas web automatizadas y descubrir nuevas convocatorias en portales que no ofrecen feeds RSS. Tavily está especialmente optimizado para ser utilizado por agentes de IA, proporcionando resultados de búsqueda concisos y relevantes que facilitan el posterior análisis por parte de Gemini.
 *   **Costos Asociados**:
-    *   **Plan Gratuito**: Tanto Brave como Tavily ofrecen planes gratuitos que permiten un número limitado de consultas de búsqueda al mes de hasta 2,000 consultas/mes y 1 petición/segundo. Para el desarrollo y uso personal moderado, este plan es a menudo suficiente.
-    *   **Planes de Pago**: Ofrecen planes de suscripción mensual asequibles para un mayor volumen de búsquedas (ej. a partir de $5 USD/mes para 20M consultas/mes), ideales para una vigilancia continua y a gran escala.
+    *   **Plan Gratuito**: Incluyen un número limitado de consultas de búsqueda al mes de 2,000 consultas/mes y 1 petición/segundo.
+    *   **Planes de Pago**: Ofrecen planes de suscripción mensual para un mayor volumen de búsquedas (ej. $5 USD/mes para 20M consultas/mes).
 
 #### **Tecnologías RSS**
 
 *   **Rol en el Sistema**: El sistema se suscribe a feeds RSS (Really Simple Syndication) de fuentes confiables y conocidas. Este es un método altamente eficiente y estructurado para recibir notificaciones automáticas sobre nuevas convocatorias directamente de la fuente.
 *   **Costos Asociados**:
-    *   **Costo Cero**: La tecnología RSS es un estándar web abierto y su uso es **completamente gratuito**. No hay APIs, ni claves, ni límites de peticiones. Es la forma más económica y directa de obtener datos de las fuentes que lo soportan.
+    *   **Costo Cero**: La tecnología RSS es un estándar web abierto y su uso es **completamente gratuito**. No hay APIs, ni claves, ni límites de peticiones.
 
 #### **LangSmith**
 
 *   **Rol en el Sistema**: Es una plataforma de observabilidad y depuración. Se integra con LangChain para ofrecer una trazabilidad completa de las operaciones del agente. Permite a los desarrolladores monitorear cada paso del proceso (búsquedas, llamadas a Gemini, extracción de datos), facilitando la identificación de errores, la optimización de los *prompts* y la mejora continua de la fiabilidad del sistema.
 *   **Costos Asociados**:
-    *   **Plan Gratuito (Developer Plan)**: LangChain ofrece un plan gratuito generoso para desarrolladores individuales, que incluye 5000 trazas/mes (registros de ejecución). Es más que suficiente para desarrollar, depurar y monitorear este proyecto.
-    *   **Planes de Pago**: Para equipos o aplicaciones con un volumen de ejecución masivo, existen planes de pago que ofrecen más trazas, mayor retención de datos y funcionalidades colaborativas.
+    *   **Plan Gratuito (Developer Plan)**: Incluye 5000 trazas/mes (registros de ejecución).
+    *   **Planes de Pago**: Existen planes de pago que ofrecen más trazas, mayor retención de datos y funcionalidades colaborativas.
 
-### **Tabla Comparativa de Costos**
 
-| Servicio | Plan Gratuito (Límites Típicos) | Modelo de Costo Premium | Ideal Para... |
-| :--- | :--- | :--- | :--- |
-| **Gemini API** | 15 Peticiones/Minuto y 50 Peticiones/Día | Pago por uso ($0.35 / 1M tokens) | Desarrollo, pruebas y uso a pequeña/mediana escala.
-| **Brave/Tavily API** | 2,000 Consultas/Mes y 1 Consulta/Segundo | Suscripción mensual (desde $5/mes) | Desarrollo y vigilancia ocasional.
-| **Tecnologías RSS** | **Sin límites** | **Gratuito** | Obtener datos de alta calidad de fuentes conocidas. |
-| **LangSmith** | 5,000 Trazas/Mes | Suscripción mensual | Desarrollo, depuración y monitoreo continuo.
+### **Análisis de Costos en Operación Real**
+
+Hemos analizado una ejecución típica de nuestra herramienta utilizando el modelo **Gemini 1.5 Flash**.
+
+#### **1. Costo del Flujo de Descubrimiento**
+
+Una ejecución completa de esta fase es un proceso de múltiples pasos. El consumo de tokens se desglosa de la siguiente manera:
+
+*   **Generación de Queries**: Una única llamada a la API para crear 10 consultas de búsqueda estratégicas (5 ideas x 2 regiones).
+    *   *Consumo*: ~1,000 tokens.
+*   **Escrutinio de Resultados**: Múltiples llamadas pequeñas para clasificar la relevancia de cada resultado encontrado (~40 resultados en un escenario típico).
+    *   *Consumo por resultado*: ~200 tokens.
+    *   *Consumo total*: ~8,000 tokens.
+*   **Extracción de Oportunidades**: Llamadas más intensivas para leer el contenido de las páginas relevantes (~10 fuentes en un escenario típico) y extraer la información.
+    *   *Consumo por extracción*: ~1,350 tokens.
+    *   *Consumo total*: ~13,500 tokens.
+
+Esto resulta en un consumo total aproximado para el flujo:
+
+*   **Consumo Total de Tokens**: **~22,500 tokens**
+*   **Costo por Ejecución**: **~$0.0027 USD**
+
+#### **2. Costo del Flujo de Enriquecimiento**
+
+El enriquecimiento de una oportunidad individual (que implica buscar la fuente primaria, scrapear la página y analizar su contenido) es el paso más intensivo por unidad. En promedio, consume:
+
+*   **Consumo por Oportunidad**: **~5,000 tokens**
+*   **Costo por Oportunidad**: **~$0.0004 USD**
+
+#### **Escenario Típico: Una Vigilancia Completa**
+
+Un escenario común es que el flujo de descubrimiento identifique **40 oportunidades** que luego pasan a ser enriquecidas. El desglose de costos sería:
+
+| Flujo | Consumo Estimado | Costo Estimado |
+| :--- | :--- | :--- |
+| **Descubrimiento** | 22,500 tokens | $0.0027 USD |
+| **Enriquecimiento (40 opps)** | 200,000 tokens (40 x 5,000) | $0.0160 USD |
+| **TOTAL POR VIGILANCIA** | **~222,500 tokens** | **~$0.0187 USD** |
+
+Como se puede observar, una vigilancia completa que encuentra y enriquece 40 oportunidades tiene un costo inferior a **dos centavos de dólar**.
+
+---
+
+### **Proyección en la Capa Gratuita**
+
+¿Cuántas vigilancias se pueden realizar antes de incurrir en costos? Para responder a esto, debemos considerar los dos cuellos de botella principales de la capa gratuita: las consultas de búsqueda y los tokens de Gemini.
+
+1.  **Límite de Búsqueda (Brave/Tavily)**: ~2,000 consultas/mes.
+2.  **Límite de Tokens (Gemini)**: ~1,000,000 tokens/mes.
+
+Ahora, calculemos cuántas ejecuciones permite cada límite:
+
+*   **Ejecuciones limitadas por Búsqueda**:
+    *   `2,000 consultas / 10 consultas por ejecución` = **200 ejecuciones/mes**.
+*   **Ejecuciones limitadas por Tokens de Gemini (flujo completo)**:
+    *   `1,000,000 tokens / 222,500 tokens por ejecución` = **~4 ejecuciones/mes**.
+
+**Conclusión**: El verdadero cuello de botella en la capa gratuita para el **agente completo** (Descubrimiento + Enriquecimiento) es el **límite de tokens de Gemini**. Sin embargo, esto nos da una gran flexibilidad:
+
+*   **Ejecución del Agente Completo**: Puedes realizar aproximadamente **4 vigilancias completas al mes** (encontrando y enriqueciendo ~160 oportunidades en total) sin costo alguno.
+*   **Ejecución del Flujo de Descubrimiento Únicamente**: Si solo necesitas encontrar las oportunidades sin enriquecerlas, el límite lo imponen los tokens de este flujo:
+    *   `1,000,000 tokens / 22,500 tokens por descubrimiento` = **~44 ejecuciones de descubrimiento al mes**.
+    *   Esto equivale a más de **una ejecución de descubrimiento por día**, lo cual es excelente para un monitoreo constante y gratuito.
+
+---
+
+### **Comparativa de Costos: Gemini vs. OpenAI**
+
+Para poner en perspectiva la elección del modelo, a continuación se compara el costo del "Escenario Típico" si se utilizara un modelo equivalente de OpenAI como **GPT-3.5-Turbo**.
+
+| Flujo | Gemini 1.5 Flash (Costo) | OpenAI GPT-3.5-Turbo (Costo Estimado) |
+| :--- | :--- | :--- |
+| **Descubrimiento** | **$0.0027** | ~$0.0180 |
+| **Enriquecimiento (40 opps)** | **$0.0160** | ~$0.1600 |
+| **TOTAL POR VIGILANCIA** | **~$0.0187** | **~$0.1780** |
+
+**Conclusión**: Al utilizar Gemini 1.5 Flash, el costo operativo del agente es aproximadamente **9.5 veces más económico** que si se utilizara GPT-3.5-Turbo para las mismas tareas.
 
 
 
